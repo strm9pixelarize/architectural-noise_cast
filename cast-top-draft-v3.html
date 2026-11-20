@@ -149,6 +149,7 @@
   tr.onair td { background: rgba(252,167,63,.16); font-weight: 700; }
   .onair-tag { display: inline-block; margin-left: 8px; padding: 1px 8px; border-radius: 99px;
     background: #ef4444; color: #fff; font-size: .68rem; font-weight: 800; letter-spacing: .08em; vertical-align: middle; }
+  .planned { display: block; margin-top: 2px; color: var(--muted); font-size: .8rem; font-weight: 400; }
   .note { font-size: .85rem; color: var(--muted); line-height: 1.7; }
   .countdown { font-size: 1.6rem; font-weight: 800; color: var(--ink-strong); }
   .links a { color: #b45309; margin-right: 18px; font-weight: 600; }
@@ -275,7 +276,7 @@
     <table>
       <tbody id="schedule-body"></tbody>
     </table>
-    <p class="note">2026-11-19 に確定した週間編成 (schedule.yaml v4、全28枠)。ガジェットマニア以外は制作中の番組です。</p>
+    <p class="note">実際に放送中の編成です。「将来」とある枠はテーマ番組を制作中で、いまはガジェットマニアを放送しています。</p>
   </section>
 
   <section class="wide links reveal">
@@ -343,12 +344,21 @@
     return [h, m, s].map(function (n) { return String(n).padStart(2, "0"); }).join(":");
   }
 
-  /* ===== 番組表データ (schedule.yaml v4) ===== */
+  /* ===== 番組表データ =====
+     SCHEDULE は実際に放送している番組 (ラジオ側 schedule/*.yaml の
+     グリッドと一致させること)。PLANNED は将来その枠に入る予定の
+     テーマ番組で、その間は SCHEDULE 側が放送中。 */
   var SCHEDULE = {
-    monThu: { 12: "ブログトーク", 15: "ガジェットマニア", 18: "自鯖のある生活", 21: "ねるるの日常" },
-    fri:    { 12: "ブログトーク", 15: "ガジェットマニア", 18: "土曜日、日曜日に行きたい！関東の魅力再発見！", 21: "朗読" },
-    sat:    { 12: "関東お出かけガイド", 15: "ガジェットマニア（週末版）", 18: "自鯖のある生活（休日メンテ編）", 21: "ねるるの日常（週末版）" },
-    sun:    { 12: "お昼、何食べる？", 15: "ガジェットマニア", 18: "いま、このインディーズバンドが熱い！！！", 21: "ねるるの眠れない話" }
+    monThu: { 12: "ブログトーク", 15: "ガジェットマニア", 18: "自鯖のある生活", 21: "ガジェットマニア" },
+    fri:    { 12: "ブログトーク", 15: "ガジェットマニア", 18: "ガジェットマニア", 21: "ガジェットマニア" },
+    sat:    { 12: "ガジェットマニア", 15: "ガジェットマニア（週末版）", 18: "自鯖のある生活（休日メンテ編）", 21: "ガジェットマニア" },
+    sun:    { 12: "ガジェットマニア", 15: "ガジェットマニア", 18: "ガジェットマニア", 21: "ガジェットマニア" }
+  };
+  var PLANNED = {
+    monThu: { 21: "ねるるの日常" },
+    fri:    { 18: "土曜日、日曜日に行きたい！関東の魅力再発見！", 21: "朗読" },
+    sat:    { 12: "関東お出かけガイド", 21: "ねるるの日常（週末版）" },
+    sun:    { 12: "お昼、何食べる？", 18: "いま、このインディーズバンドが熱い！！！", 21: "ねるるの眠れない話" }
   };
   var SLOT_HOURS = [12, 15, 18, 21];
   function patternOf(date) {
@@ -403,6 +413,12 @@
       if (onair) {
         var tag = document.createElement("span"); tag.className = "onair-tag"; tag.textContent = "ON AIR";
         td.appendChild(tag);
+      }
+      var planned = PLANNED[selectedPattern][h];
+      if (planned) {
+        var note = document.createElement("span"); note.className = "planned";
+        note.textContent = "将来: " + planned + "（制作中）";
+        td.appendChild(note);
       }
       tr.appendChild(th); tr.appendChild(td); tbody.appendChild(tr);
     });

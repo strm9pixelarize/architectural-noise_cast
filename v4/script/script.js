@@ -16,12 +16,21 @@
     return [h, m, s].map(function (n) { return String(n).padStart(2, "0"); }).join(":");
   }
 
-  /* ===== 番組表データ (schedule.yaml v4) ===== */
+  /* ===== 番組表データ =====
+     SCHEDULE は実際に放送している番組 (ラジオ側 schedule/*.yaml の
+     グリッドと一致させること)。PLANNED は将来その枠に入る予定の
+     テーマ番組で、その間は SCHEDULE 側が放送中。 */
   var SCHEDULE = {
-    monThu: { 12: "ブログトーク", 15: "ガジェットマニア", 18: "自鯖のある生活", 21: "ねるるの日常" },
-    fri:    { 12: "ブログトーク", 15: "ガジェットマニア", 18: "土曜日、日曜日に行きたい！関東の魅力再発見！", 21: "朗読" },
-    sat:    { 12: "関東お出かけガイド", 15: "ガジェットマニア（週末版）", 18: "自鯖のある生活（休日メンテ編）", 21: "ねるるの日常（週末版）" },
-    sun:    { 12: "お昼、何食べる？", 15: "ガジェットマニア", 18: "いま、このインディーズバンドが熱い！！！", 21: "ねるるの眠れない話" }
+    monThu: { 12: "ブログトーク", 15: "ガジェットマニア", 18: "自鯖のある生活", 21: "ガジェットマニア" },
+    fri:    { 12: "ブログトーク", 15: "ガジェットマニア", 18: "ガジェットマニア", 21: "ガジェットマニア" },
+    sat:    { 12: "ガジェットマニア", 15: "ガジェットマニア（週末版）", 18: "自鯖のある生活（休日メンテ編）", 21: "ガジェットマニア" },
+    sun:    { 12: "ガジェットマニア", 15: "ガジェットマニア", 18: "ガジェットマニア", 21: "ガジェットマニア" }
+  };
+  var PLANNED = {
+    monThu: { 21: "ねるるの日常" },
+    fri:    { 18: "土曜日、日曜日に行きたい！関東の魅力再発見！", 21: "朗読" },
+    sat:    { 12: "関東お出かけガイド", 21: "ねるるの日常（週末版）" },
+    sun:    { 12: "お昼、何食べる？", 18: "いま、このインディーズバンドが熱い！！！", 21: "ねるるの眠れない話" }
   };
   var SLOT_HOURS = [12, 15, 18, 21];
   function patternOf(date) {
@@ -76,6 +85,12 @@
       if (onair) {
         var tag = document.createElement("span"); tag.className = "onair-tag"; tag.textContent = "ON AIR";
         td.appendChild(tag);
+      }
+      var planned = PLANNED[selectedPattern][h];
+      if (planned) {
+        var note = document.createElement("span"); note.className = "planned";
+        note.textContent = "将来: " + planned + "（制作中）";
+        td.appendChild(note);
       }
       tr.appendChild(th); tr.appendChild(td); tbody.appendChild(tr);
     });
