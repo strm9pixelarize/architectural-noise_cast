@@ -215,6 +215,27 @@
           ul.appendChild(li);
         });
         ul.style.display = topics.length ? "" : "none";
+        var ak = document.getElementById("content-akiba");
+        ak.innerHTML = "";
+        var akiba = Array.isArray(d.akiba_pickup) ? d.akiba_pickup : [];
+        akiba.forEach(function (a2) {
+          var p = document.createElement("p"); p.className = "pickup";
+          p.appendChild(document.createTextNode("AKIBAピックアップ: "));
+          if (a2.url) {
+            var link = document.createElement("a");
+            link.href = a2.url; link.textContent = a2.title || a2.url;
+            p.appendChild(link);
+          } else {
+            p.appendChild(document.createTextNode(a2.title || ""));
+          }
+          ak.appendChild(p);
+          if (a2.excerpt) {
+            var ep = document.createElement("p"); ep.className = "pickup-excerpt";
+            ep.textContent = a2.excerpt;
+            ak.appendChild(ep);
+          }
+        });
+        ak.hidden = !akiba.length;
         var pk = document.getElementById("content-pickup");
         pk.innerHTML = "";
         if (pickup.title) {
