@@ -191,8 +191,9 @@
         if (!topics.length && !pickup.title) throw new Error("empty");
         document.getElementById("content-heading").textContent =
           upcoming ? "次の番組の内容" : "いまの番組の内容";
-        document.getElementById("content-program").textContent =
-          (d.program || "") + "（" + hour + "時枠）";
+        var prog = (d.program || "") + "（" + hour + "時枠";
+        if (d.duration_sec) prog += " / " + fmt(d.duration_sec);
+        document.getElementById("content-program").textContent = prog + "）";
         var ul = document.getElementById("content-topics");
         ul.innerHTML = "";
         topics.forEach(function (t) {
@@ -218,6 +219,9 @@
           }
         }
         pk.style.display = pickup.title ? "" : "none";
+        var ex = document.getElementById("content-excerpt");
+        ex.textContent = pickup.excerpt || "";
+        ex.style.display = pickup.excerpt ? "" : "none";
         document.getElementById("content-meta").textContent =
           "この内容は " + gen.getHours() + ":" +
           String(gen.getMinutes()).padStart(2, "0") + " に生成されました";
