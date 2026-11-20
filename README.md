@@ -14,11 +14,8 @@ cast.architectural-n.net の自作トップページ (AI ラジオ「ねるる�
 
 ## 画像ファイルについて
 
-画像・アイコン (jpg / png / ico) は投入経路の都合で未収録。実物はホストの
-`html/` と、このリポジトリ管理元のローカルにある。未収録の一覧:
-
-- ルート: cast-background-1920x1080.jpg / .png、default-album-art.png /
-  default-album-art-v2.png、favicon-cast-c-v4.png、favicon.ico
-- html/: cast-background-1920x1080.jpg、default-album-art-v2.png、
-  favicon-cast-c-v4.png (中身は WebP の最適化版)、favicon.ico、
-  logo-architectural-noise.png
+画像・アイコン (jpg / png / ico) は 2026-11-20 に収録済み (優が VS Code から
+commit & push)。html/ に配置版5点、ルートに原画3点 (背景 PNG・
+アルバムアート v1・favicon の PNG 原寸) を置いている。
+html/favicon-cast-c-v4.png は中身が WebP の最適化版 (94KB) で、ルートの
+同名ファイル (442KB の PNG 原画) とは別物なので取り違えないこと。
