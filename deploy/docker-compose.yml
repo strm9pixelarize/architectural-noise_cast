@@ -1,0 +1,20 @@
+# cast.architectural-n.net 自作トップページ用 Portainer Stack 下書き
+# 2026-11-20 優が決定: 配置は azuracast_program 内ではなく /DATA/AppData/ に新規フォルダ
+# まだデプロイしない。公開時は Cloudflare 側で「/ だけこの Stack、それ以外は AzuraCast」の振り分けが別途必要
+
+services:
+  architectural-noise_cast:
+    image: nginx:alpine
+    container_name: architectural-noise_cast
+    user: "0:0"
+    restart: always
+    ports:
+      - "3104:80" # 本家3100 / ブログ3101 / Umami予定3102 / nekoOS候補3103 の続き
+    volumes:
+      - /DATA/AppData/architectural-noise-cast/html:/usr/share/nginx/html
+      - /DATA/AppData/architectural-noise-cast/conf.d:/etc/nginx/conf.d:ro
+      # v4: 放送内容 JSON (program_<枠>_latest.json) の読取専用マウント。
+      # nginx の /data/ location から4枠分だけを公開する (MP3 は出さない)
+      - /DATA/AppData/azuracast_program/output:/radio-output:ro
+    environment:
+      - TZ=Asia/Tokyo

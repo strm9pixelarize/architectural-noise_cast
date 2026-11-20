@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ねるるの日常(健全版) — cast.architectural-n.net</title>
+<!--
+  DRAFT — 2026-11-19 作成、2026-11-20 背景色を本家サイトと同色 #f7f4eb に変更。下書きのみで、デプロイはしていません。
+  AzuraCast 本体や scheduler には触れていません。
+  公開に切り替えるまでは、現行の Cloudflare URL Rewrite
+  (/ → /public/nerurus_room_rest) を消さないこと。
+  デプロイ方法は未決定。本家・ブログと同じ nginx Stack 型が候補。
+  ポートは未定 (3103 は nekoOS サイトの提案ポートなので流用しない)。
+-->
+<link rel="icon" href="favicon-cast-c-v4.png">
+<style>
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; font-family: system-ui, "Hiragino Kaku Gothic ProN", sans-serif;
+    color: #1e293b; background: #f7f4eb url("cast-background-1920x1080.jpg") center / cover fixed;
+  }
+  .veil { background: rgba(247, 244, 235, .93); min-height: 100vh; }
+  main { max-width: 880px; margin: 0 auto; padding: 32px 20px 64px; }
+  h1 { font-size: 2rem; margin: 0 0 4px; }
+  .sub { color: #64748b; margin: 0 0 24px; }
+  section { background: rgba(255,255,255,.65); border: 1px solid rgba(30,41,59,.14);
+            border-radius: 14px; padding: 20px; margin-bottom: 20px; }
+  h2 { font-size: 1.1rem; margin: 0 0 12px; }
+  audio { width: 100%; }
+  .now { font-size: 1.25rem; font-weight: 700; }
+  .meta { color: #64748b; margin-top: 6px; }
+  .meta span + span::before { content: "・"; }
+  table { width: 100%; border-collapse: collapse; font-size: .92rem; }
+  th, td { border-bottom: 1px solid rgba(30,41,59,.12); padding: 8px 6px; text-align: left; vertical-align: top; }
+  th { color: #64748b; font-weight: 600; white-space: nowrap; }
+  td.today { background: rgba(252,167,63,.20); }
+  .links a { color: #b45309; margin-right: 18px; }
+  .note { font-size: .85rem; color: #64748b; }
+</style>
+</head>
+<body>
+<div class="veil">
+<main>
+  <h1>ねるるの日常(健全版)</h1>
+  <p class="sub">AI がつくる、どこでも聴けるラジオ。cast.architectural-n.net</p>
+
+  <section>
+    <h2>▶ いま聴く</h2>
+    <audio controls preload="none"
+      src="https://cast.architectural-n.net/listen/nerurus_room_rest/radio.mp3"></audio>
+    <p class="note">192kbps MP3 ストリーム。再生できない場合は
+      <a href="https://cast.architectural-n.net/public/nerurus_room_rest">AzuraCast の公開プレイヤー</a>
+      をお試しください。</p>
+  </section>
+
+  <section>
+    <h2>いま流れているもの</h2>
+    <p class="now" id="now-playing">読み込み中…</p>
+    <p class="meta"><span id="now-next"></span><span id="now-listeners"></span></p>
+    <p class="note">AzuraCast の Now Playing API
+      (<code>/api/nowplaying/nerurus_room_rest</code>) から30秒ごとに更新します。</p>
+  </section>
+
+  <section>
+    <h2>週間編成 — 長編 12 / 15 / 18 / 21時</h2>
+    <table id="schedule">
+      <thead><tr><th></th><th>月〜木</th><th>金</th><th>土</th><th>日</th></tr></thead>
+      <tbody>
+        <tr><th>12時</th><td>ブログトーク</td><td>ブログトーク</td><td>関東お出かけガイド</td><td>お昼、何食べる？</td></tr>
+        <tr><th>15時</th><td>ガジェットマニア</td><td>ガジェットマニア</td><td>ガジェットマニア（週末版）</td><td>ガジェットマニア</td></tr>
+        <tr><th>18時</th><td>自鯖のある生活</td><td>土曜日、日曜日に行きたい！関東の魅力再発見！</td><td>自鯖のある生活（休日メンテ編）</td><td>いま、このインディーズバンドが熱い！！！</td></tr>
+        <tr><th>21時</th><td>ねるるの日常</td><td>朗読</td><td>ねるるの日常（週末版）</td><td>ねるるの眠れない話</td></tr>
+      </tbody>
+    </table>
+    <p class="note">2026-11-19 に確定した週間編成 (schedule.yaml v4、全28枠)。
+      ガジェットマニア以外は制作中の番組です。合間にネルラジニュース
+      (10・11・13・14・16・17・19・20・22時、各約10分)、毎時15分に交通情報、
+      毎時45分に天気情報が入ります。</p>
+  </section>
+
+  <section class="links">
+    <h2>リンク</h2>
+    <a href="https://blog.architectural-n.net/">ブログ「ねるると鍵鷺優の徒然日記」</a>
+    <a href="https://main.architectural-n.net/">本家サイト</a>
+    <a href="https://cast.architectural-n.net/public/nerurus_room_rest">公開プレイヤー（リクエストはこちら）</a>
+  </section>
+</main>
+</div>
+<script>
+(function () {
+  var API = "https://cast.architectural-n.net/api/nowplaying/nerurus_room_rest";
+  function fmt(sec) {
+    sec = Math.max(0, Math.round(sec || 0));
+    return Math.floor(sec / 60) + ":" + String(sec % 60).padStart(2, "0");
+  }
+  function update() {
+    fetch(API).then(function (r) { return r.json(); }).then(function (d) {
+      var np = d.now_playing || {};
+      var song = np.song || {};
+      var label = (song.artist ? song.artist + " — " : "") + (song.title || "—");
+      document.getElementById("now-playing").textContent = label;
+      var next = d.playing_next && d.playing_next.song
+        ? "次: " + (d.playing_next.song.artist ? d.playing_next.song.artist + " — " : "") + d.playing_next.song.title
+        : "";
+      var elapsed = np.elapsed != null && np.duration
+        ? fmt(np.elapsed) + " / " + fmt(np.duration) : "";
+      document.getElementById("now-next").textContent = [next, elapsed].filter(Boolean).join("　");
+      var n = d.listeners ? d.listeners.current : 0;
+      document.getElementById("now-listeners").textContent = "リスナー: " + n + "人";
+    }).catch(function () {
+      document.getElementById("now-playing").textContent = "Now Playing を取得できませんでした";
+    });
+  }
+  update();
+  setInterval(update, 30000);
+  // 今日の曜日列をハイライト (月=1 … 日=0)
+  var day = new Date().getDay(); // 0=日
+  var col = day === 0 ? 4 : day <= 4 ? 1 : day === 5 ? 2 : 3;
+  document.querySelectorAll("#schedule tbody tr").forEach(function (tr) {
+    tr.children[col].classList.add("today");
+  });
+})();
+</script>
+</body>
+</html>
