@@ -56,7 +56,7 @@
   }
   .hero::before {
     content: ""; position: absolute; inset: 0;
-    background: url("cast-background-1920x1080.jpg") center / cover;
+    background: url("/cast-background-1920x1080.jpg") center / cover;
     opacity: .5;
   }
   .hero::after {
