@@ -1,21 +1,31 @@
-# architectural-noise_cast
+# cast.architectural-n.net 自作トップページ
 
-cast.architectural-n.net の自作トップページ (AI ラジオ「ねるるの日常(健全版)」) の
-ソースとデプロイ資材を置くプライベートリポジトリ。
+「ねるるの日常(健全版)」(AzuraCast ステーション id 11) の公開トップページ。
+このリポジトリは本番フォルダそのもので、ホストの
+`/DATA/AppData/architectural-noise-cast/` に clone して使う。
 
 ## 構成
 
-- `html/` `conf.d/` — ホストで稼働中の実績 (index.html は v3)
-- `v4/` — 次期版。index.html / style/style.css / script/script.js への分割と
-  放送内容セクション (生成側の program_<枠>_latest.json を表示) を含む。
-  デプロイ手順は `deploy/README.md` の v4 の節
-- `cast-top-draft*.html` — v1〜v3 の叩き台 (単一ファイル版)
-- `deploy/` — デプロイ手順、docker-compose、nginx 設定の叩き台
+| パス | 内容 |
+|---|---|
+| `html/` | 公開ファイル一式 (nginx のルート) |
+| `html/index.html` | トップページ |
+| `html/style/style.css` | スタイル |
+| `html/script/script.js` | プレイヤー・番組表・放送内容の表示 |
+| `conf.d/nginx.conf` | nginx 設定 (CSP と /data/ の JSON 公開を含む) |
 
-## 画像ファイルについて
+- Stack: Portainer で nginx:alpine、コンテナ名 `architectural-noise_cast`、ホスト 3104 番
+- compose のマウント: `html:/usr/share/nginx/html`、`conf.d:/etc/nginx/conf.d:ro`、
+  `/DATA/AppData/azuracast_program/output:/radio-output:ro` (放送内容 JSON 用)
+- 公開は Cloudflare Tunnel のパス振り分け (このパスだけ 3104 へ、他は AzuraCast):
+  `^/($|index\.html$|style/style\.css$|script/script\.js$|cast-background-1920x1080\.jpg$|favicon-cast-c-v4\.png$|default-album-art-v2\.png$|data/program_(12|15|18|21)_latest\.json$)`
 
-画像・アイコン (jpg / png / ico) は 2026-11-20 に収録済み (優が VS Code から
-commit & push)。html/ に配置版5点、ルートに原画3点 (背景 PNG・
-アルバムアート v1・favicon の PNG 原寸) を置いている。
-html/favicon-cast-c-v4.png は中身が WebP の最適化版 (94KB) で、ルートの
-同名ファイル (442KB の PNG 原画) とは別物なので取り違えないこと。
+## 運用メモ
+
+- 番組表データ (script.js の SCHEDULE / PLANNED) は、ラジオ側リポジトリの
+  `schedule/*.yaml` の実グリッドに合わせる。将来のテーマ番組は PLANNED 側に置き、
+  放送が始まったら SCHEDULE へ移す
+- style.css / script.js は7日キャッシュ対象。更新が反映されないときは
+  Cloudflare で該当 URL をパージする
+- 放送内容セクションは `/data/program_<枠>_latest.json` (生成側のサイドカー) を
+  読む。JSON が無い枠ではセクションごと隠れる
