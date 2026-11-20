@@ -124,13 +124,13 @@
     color: var(--ink); border-radius: 999px; padding: 7px 16px; font-weight: 700; font-size: .88rem;
   }
   .day-tabs button.active { background: var(--ink-strong); color: var(--brand); border-color: var(--ink-strong); }
-  table { width: 100%; border-collapse: collapse; font-size: .94rem; }
+  table { width: 100%; border-collapse: collapse; font-size: .94rem; table-layout: fixed; }
   th, td { border-bottom: 1px solid var(--line); padding: 10px 8px; text-align: left; vertical-align: top; }
-  th { color: var(--muted); white-space: nowrap; }
+  th { color: var(--muted); white-space: nowrap; width: 4.2rem; }
   tr.onair td { background: rgba(252,167,63,.16); font-weight: 700; }
   .onair-tag { display: inline-block; margin-left: 8px; padding: 1px 8px; border-radius: 99px;
     background: #ef4444; color: #fff; font-size: .68rem; font-weight: 800; letter-spacing: .08em; vertical-align: middle; }
-  .planned { display: block; margin-top: 2px; color: var(--muted); font-size: .8rem; font-weight: 400; }
+  .planned { display: block; margin-top: 2px; min-height: 1.3em; color: var(--muted); font-size: .8rem; font-weight: 400; }
   .note { font-size: .85rem; color: var(--muted); line-height: 1.7; }
   .countdown { font-size: 1.6rem; font-weight: 800; color: var(--ink-strong); }
   .links a { color: #b45309; margin-right: 18px; font-weight: 600; }

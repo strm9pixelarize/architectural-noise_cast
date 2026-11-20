@@ -87,11 +87,9 @@
         td.appendChild(tag);
       }
       var planned = PLANNED[selectedPattern][h];
-      if (planned) {
-        var note = document.createElement("span"); note.className = "planned";
-        note.textContent = "将来: " + planned + "（制作中）";
-        td.appendChild(note);
-      }
+      var note = document.createElement("span"); note.className = "planned";
+      note.textContent = planned ? "将来: " + planned + "（制作中）" : "";
+      td.appendChild(note);
       tr.appendChild(th); tr.appendChild(td); tbody.appendChild(tr);
     });
   }
