@@ -195,6 +195,7 @@
 
   /* ===== 放送内容 (サイドカー JSON の表示、v4 で追加) ===== */
   .content-program { font-weight: 800; color: var(--ink-strong); margin: 0 0 10px; font-size: 1.02rem; }
+  .content-label { margin: 0 0 4px; font-weight: 700; font-size: .9rem; }
   .topics { margin: 0 0 12px; padding-left: 1.3em; line-height: 1.85; }
   .pickup { margin: 0 0 8px; }
   .pickup a { color: #b45309; font-weight: 600; }

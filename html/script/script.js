@@ -215,6 +215,7 @@
           ul.appendChild(li);
         });
         ul.style.display = topics.length ? "" : "none";
+        document.getElementById("content-topics-label").hidden = !topics.length;
         var ak = document.getElementById("content-akiba");
         ak.innerHTML = "";
         var akiba = Array.isArray(d.akiba_pickup) ? d.akiba_pickup : [];
