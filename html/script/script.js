@@ -366,8 +366,96 @@
       .catch(function () { });
   }
 
+
+  /* ===== 曲のリクエスト (AzuraCast 公開API) =====
+     一覧: GET /api/station/<shortcode>/requests
+     送信: POST <request_url> (一覧の各曲に付いているパス)
+     制限 (同じ曲・連続リクエスト) は AzuraCast 側が判定し、理由が返る。 */
+  var REQ_API = "https://cast.architectural-n.net/api/station/nerurus_room_rest/requests";
+  var reqSongs = [];
+  var reqDone = {}; // request_id -> true (このページで送信済みの曲)
+  function reqStatus(msg, kind) {
+    var el = document.getElementById("req-status");
+    el.textContent = msg;
+    el.className = "req-status" + (kind ? " " + kind : "");
+  }
+  function renderRequests(filter) {
+    var list = document.getElementById("req-list");
+    list.innerHTML = "";
+    var q = (filter || "").trim().toLowerCase();
+    var shown = 0;
+    reqSongs.forEach(function (item) {
+      var s = item.song || {};
+      var hay = ((s.title || "") + " " + (s.artist || "") + " " + (s.text || "")).toLowerCase();
+      if (q && hay.indexOf(q) === -1) return;
+      shown++;
+      var li = document.createElement("li"); li.className = "req-item";
+      var img = document.createElement("img");
+      img.src = s.art || "default-album-art-v2.png"; img.alt = "";
+      li.appendChild(img);
+      var info = document.createElement("div"); info.className = "req-info";
+      var tt = document.createElement("div"); tt.className = "req-title";
+      tt.textContent = s.title || s.text || "—";
+      var ar = document.createElement("div"); ar.className = "req-artist";
+      ar.textContent = s.artist || "";
+      info.appendChild(tt); info.appendChild(ar); li.appendChild(info);
+      var btn = document.createElement("button");
+      btn.className = "req-btn"; btn.type = "button";
+      if (reqDone[item.request_id]) {
+        btn.textContent = "受付済み"; btn.disabled = true; btn.classList.add("done");
+      } else {
+        btn.textContent = "リクエスト";
+      }
+      btn.addEventListener("click", function () { sendRequest(item, btn); });
+      li.appendChild(btn);
+      list.appendChild(li);
+    });
+    if (!shown) {
+      reqStatus(q ? "「" + filter + "」に一致する曲がありません" : "リクエストできる曲がありません");
+    } else if (!q) {
+      reqStatus("リクエストできる曲は " + reqSongs.length + " 曲です");
+    }
+  }
+  function sendRequest(item, btn) {
+    btn.disabled = true; btn.textContent = "送信中…";
+    fetch("https://cast.architectural-n.net" + item.request_url, { method: "POST" })
+      .then(function (r) {
+        return r.json().catch(function () { return {}; })
+          .then(function (j) { return { ok: r.ok, j: j }; });
+      })
+      .then(function (res) {
+        var j = res.j || {};
+        if (res.ok && j.success !== false) {
+          reqDone[item.request_id] = true;
+          btn.textContent = "受付済み"; btn.classList.add("done");
+          reqStatus("「" + ((item.song || {}).title || "") +
+            "」のリクエストを受け付けました。順番が来たら流れます。", "ok");
+        } else {
+          btn.disabled = false; btn.textContent = "リクエスト";
+          reqStatus(j.message || j.error ||
+            "リクエストできませんでした (制限中の可能性があります)", "err");
+        }
+      })
+      .catch(function () {
+        btn.disabled = false; btn.textContent = "リクエスト";
+        reqStatus("送信に失敗しました。通信環境を確認してもう一度お試しください", "err");
+      });
+  }
+  function loadRequests() {
+    fetch(REQ_API).then(function (r) { return r.json(); }).then(function (d) {
+      reqSongs = Array.isArray(d) ? d : [];
+      renderRequests(document.getElementById("req-search").value);
+    }).catch(function () {
+      reqStatus("曲リストを取得できませんでした", "err");
+    });
+  }
+  document.getElementById("req-search").addEventListener("input", function (e) {
+    renderRequests(e.target.value);
+  });
+
   renderSchedule();
   update();
+  loadRequests();
   renderContent();
   renderLinks();
   setInterval(update, 30000);

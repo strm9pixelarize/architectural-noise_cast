@@ -18,7 +18,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style/style.css?v=20261121d">
+<link rel="stylesheet" href="style/style.css?v=20261121e">
 </head>
 <body>
 <header>
@@ -100,6 +100,15 @@
     <p class="note">実際に放送中の編成です。「将来」とある枠はテーマ番組を制作中で、いまはガジェットマニアを放送しています。</p>
   </section>
 
+  <section class="wide reveal">
+    <h2>曲のリクエスト</h2>
+    <p class="note">聴きたい曲を選んでリクエストできます。リクエストした曲は AutoDJ の順番に入り、
+      しばらくすると流れます。同じ曲の再リクエストや連続リクエストには AzuraCast 側の制限があります。</p>
+    <input class="req-search" id="req-search" type="search" placeholder="曲名・アーティストで検索" aria-label="リクエスト曲を検索">
+    <p class="req-status" id="req-status">読み込み中…</p>
+    <ul class="req-list" id="req-list"></ul>
+  </section>
+
   <section class="wide links reveal">
     <h2>リンク</h2>
     <div id="links-list">
@@ -150,6 +159,6 @@
 <audio id="radio-audio" preload="none"
   src="https://cast.architectural-n.net/listen/nerurus_room_rest/radio.mp3"></audio>
 
-<script src="script/script.js?v=20261121f"></script>
+<script src="script/script.js?v=20261121g"></script>
 </body>
 </html>
