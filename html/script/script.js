@@ -257,6 +257,27 @@
         var ex = document.getElementById("content-excerpt");
         ex.textContent = pickup.excerpt || "";
         ex.style.display = pickup.excerpt ? "" : "none";
+        var fp = d.friend_pickup || {};
+        var fk = document.getElementById("content-friend");
+        fk.innerHTML = "";
+        if (fp.title) {
+          fk.appendChild(document.createTextNode(
+            "友人のブログ「" + (fp.blog_name || "エレクトロライフ") + "」: "));
+          if (fp.url) {
+            var fa = document.createElement("a");
+            fa.href = fp.url; fa.textContent = fp.title;
+            fk.appendChild(fa);
+          } else {
+            fk.appendChild(document.createTextNode(fp.title));
+          }
+          if (fp.date) {
+            fk.appendChild(document.createTextNode("（" + fp.date + "）"));
+          }
+        }
+        fk.style.display = fp.title ? "" : "none";
+        var fx = document.getElementById("content-friend-excerpt");
+        fx.textContent = fp.excerpt || "";
+        fx.style.display = fp.excerpt ? "" : "none";
         document.getElementById("content-meta").textContent =
           "この内容は " + gen.getHours() + ":" +
           String(gen.getMinutes()).padStart(2, "0") + " に生成されました";
