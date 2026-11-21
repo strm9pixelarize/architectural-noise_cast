@@ -157,6 +157,20 @@
       var n = d.listeners ? d.listeners.current : 0;
       document.getElementById("now-listeners").textContent = "リスナー: " + n + "人";
       document.getElementById("fs-listeners").textContent = "リスナー: " + n + "人";
+      // 歌詞 (API の song.lyrics。無い曲ではブロックごと隠す)
+      var lyrics = (s.lyrics || "").trim();
+      [["np-lyrics", "np-lyrics-body"], ["fs-lyrics", "fs-lyrics-body"]].forEach(function (pair) {
+        var box = document.getElementById(pair[0]);
+        var bodyEl = document.getElementById(pair[1]);
+        if (!box || !bodyEl) return;
+        if (lyrics) {
+          if (bodyEl.textContent !== lyrics) bodyEl.textContent = lyrics;
+          box.hidden = false;
+        } else {
+          box.hidden = true;
+          bodyEl.textContent = "";
+        }
+      });
       var hist = document.getElementById("history");
       hist.innerHTML = "";
       (d.song_history || []).slice(0, 5).forEach(function (h) {

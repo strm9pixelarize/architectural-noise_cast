@@ -184,7 +184,8 @@
   .fs-overlay.open { opacity: 1; pointer-events: auto; }
   .fs-bg { position: absolute; inset: -40px; background-size: cover; background-position: center;
     filter: blur(36px) brightness(.45); transform: scale(1.1); background-color: #0f172a; }
-  .fs-in { position: relative; z-index: 1; text-align: center; padding: 24px; max-width: 520px; width: 100%; }
+  .fs-in { position: relative; z-index: 1; text-align: center; padding: 24px; max-width: 520px; width: 100%;
+    max-height: 100dvh; overflow-y: auto; }
   .fs-art { width: min(58vw, 300px); height: min(58vw, 300px); border-radius: 20px; object-fit: cover;
     box-shadow: 0 30px 60px rgba(0,0,0,.5); }
   .fs-title { font-size: 1.5rem; font-weight: 800; margin: 22px 0 4px; }
@@ -201,6 +202,18 @@
   .fs-spacer { width: 110px; }
   @media (max-width: 640px) { .fs-vol, .fs-spacer { display: none; } }
   .fs-next { color: #e2e8f0; font-size: .9rem; margin-top: 18px; }
+  .fs-lyrics { margin-top: 20px; text-align: left; background: rgba(255,255,255,.08);
+    border: 1px solid rgba(255,255,255,.16); border-radius: 14px; padding: 14px 16px; }
+  .fs-lyrics-head { margin: 0 0 8px; font-size: .78rem; font-weight: 700;
+    letter-spacing: .18em; color: #cbd5e1; }
+  .fs-lyrics-body { white-space: pre-wrap; word-break: break-word;
+    line-height: 1.9; font-size: .92rem; color: #f1f5f9; }
+  .np-lyrics { margin-top: 14px; text-align: left; background: var(--card);
+    border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; }
+  .np-lyrics-head { margin: 0 0 8px; font-size: .78rem; font-weight: 700;
+    letter-spacing: .18em; color: var(--muted); }
+  .np-lyrics-body { white-space: pre-wrap; word-break: break-word;
+    line-height: 1.9; font-size: .92rem; color: var(--ink); }
   .fs-close { position: absolute; top: 18px; right: 20px; z-index: 2; width: 44px; height: 44px;
     border-radius: 50%; border: 1px solid rgba(255,255,255,.3); background: rgba(255,255,255,.12);
     color: #fff; font-size: 1.1rem; cursor: pointer; }
