@@ -12,13 +12,14 @@
 | `html/index.html` | トップページ |
 | `html/style/style.css` | スタイル |
 | `html/script/script.js` | プレイヤー・番組表・放送内容の表示 |
+| `html/links.json` | 一番下のリンク欄の設定 (title / url / description / image) |
 | `conf.d/nginx.conf` | nginx 設定 (CSP と /data/ の JSON 公開を含む) |
 
 - Stack: Portainer で nginx:alpine、コンテナ名 `architectural-noise_cast`、ホスト 3104 番
 - compose のマウント: `html:/usr/share/nginx/html`、`conf.d:/etc/nginx/conf.d:ro`、
   `/DATA/AppData/azuracast_program/output:/radio-output:ro` (放送内容 JSON 用)
 - 公開は Cloudflare Tunnel のパス振り分け (このパスだけ 3104 へ、他は AzuraCast):
-  `^/($|index\.html$|style/style\.css$|script/script\.js$|cast-background-1920x1080\.jpg$|favicon-cast-c-v4\.png$|default-album-art-v2\.png$|data/program_(12|15|18|21)_latest\.json$)`
+  `^/($|index\.html$|links\.json$|style/style\.css$|script/script\.js$|cast-background-1920x1080\.jpg$|favicon-cast-c-v4\.png$|default-album-art-v2\.png$|data/program_(12|15|18|21)_latest\.json$)`
 
 ## 運用メモ
 

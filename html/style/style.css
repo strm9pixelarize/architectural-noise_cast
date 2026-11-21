@@ -134,6 +134,13 @@
   .note { font-size: .85rem; color: var(--muted); line-height: 1.7; }
   .countdown { font-size: 1.6rem; font-weight: 800; color: var(--ink-strong); }
   .links a { color: #b45309; margin-right: 18px; font-weight: 600; }
+  .links a.link-card { display: flex; align-items: center; gap: 14px; margin: 0 0 10px;
+    padding: 12px 14px; border: 1px solid var(--line); border-radius: 14px;
+    background: rgba(255,255,255,.55); text-decoration: none; }
+  .link-thumb { width: 64px; height: 64px; object-fit: cover; border-radius: 10px; flex: none; }
+  .link-body { display: block; }
+  .link-title { display: block; font-weight: 700; }
+  .link-desc { display: block; margin-top: 2px; color: var(--muted); font-size: .88rem; font-weight: 400; line-height: 1.6; }
   footer { max-width: 1080px; margin: 0 auto; padding: 10px 20px 30px; color: var(--muted); font-size: .82rem; }
 
   /* ===== 固定プレイヤーバー (本家のオレンジ・バーを超える版) ===== */

@@ -310,9 +310,45 @@
   }, { threshold: 0.12 });
   document.querySelectorAll(".reveal").forEach(function (el) { io.observe(el); });
 
+  /* ===== リンク (links.json で設定。読めなければ静的リンクのまま) ===== */
+  function renderLinks() {
+    var box = document.getElementById("links-list");
+    if (!box) return;
+    fetch("links.json", { cache: "no-store" })
+      .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+      .then(function (d) {
+        var links = Array.isArray(d.links) ? d.links : [];
+        if (!links.length) return;
+        box.innerHTML = "";
+        links.forEach(function (item) {
+          if (!item || !item.url || !item.title) return;
+          var a = document.createElement("a");
+          a.className = "link-card"; a.href = item.url;
+          if (item.image) {
+            var img = document.createElement("img");
+            img.className = "link-thumb"; img.src = item.image; img.alt = "";
+            a.appendChild(img);
+          }
+          var body = document.createElement("span"); body.className = "link-body";
+          var t = document.createElement("span"); t.className = "link-title";
+          t.textContent = item.title;
+          body.appendChild(t);
+          if (item.description) {
+            var ds = document.createElement("span"); ds.className = "link-desc";
+            ds.textContent = item.description;
+            body.appendChild(ds);
+          }
+          a.appendChild(body);
+          box.appendChild(a);
+        });
+      })
+      .catch(function () { });
+  }
+
   renderSchedule();
   update();
   renderContent();
+  renderLinks();
   setInterval(update, 30000);
   setInterval(renderContent, 30000);
   tickClock();
