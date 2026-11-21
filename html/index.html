@@ -18,7 +18,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style/style.css?v=20261122b">
+<link rel="stylesheet" href="style/style.css?v=20261122c">
 </head>
 <body>
 <header>
@@ -61,10 +61,10 @@
     <div class="progress"><div id="np-progress"></div></div>
     <p class="meta mono"><span id="np-time">-:-- / -:--</span><span id="now-listeners"></span></p>
     <p class="meta meta-next"><span id="now-next"></span></p>
-    <div class="np-lyrics" id="np-lyrics" hidden>
-      <p class="np-lyrics-head">歌詞</p>
+    <details class="np-lyrics" id="np-lyrics" hidden>
+      <summary class="np-lyrics-head">歌詞</summary>
       <div class="np-lyrics-body" id="np-lyrics-body"></div>
-    </div>
+    </details>
     <ul class="history" id="history"></ul>
   </section>
 
@@ -169,6 +169,6 @@
 <audio id="radio-audio" preload="none"
   src="https://cast.architectural-n.net/listen/nerurus_room_rest/radio.mp3"></audio>
 
-<script src="script/script.js?v=20261122a"></script>
+<script src="script/script.js?v=20261122b"></script>
 </body>
 </html>

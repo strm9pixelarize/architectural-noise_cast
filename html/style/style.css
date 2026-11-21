@@ -210,9 +210,14 @@
     line-height: 1.9; font-size: .92rem; color: #f1f5f9; }
   .np-lyrics { margin-top: 14px; text-align: left; background: var(--card);
     border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; }
-  .np-lyrics-head { margin: 0 0 8px; font-size: .78rem; font-weight: 700;
-    letter-spacing: .18em; color: var(--muted); }
-  .np-lyrics-body { white-space: pre-wrap; word-break: break-word;
+  .np-lyrics-head { margin: 0; font-size: .78rem; font-weight: 700;
+    letter-spacing: .18em; color: var(--muted); cursor: pointer;
+    display: flex; justify-content: space-between; align-items: center;
+    list-style: none; }
+  .np-lyrics-head::-webkit-details-marker { display: none; }
+  .np-lyrics-head::after { content: "▸"; font-size: .95rem; letter-spacing: 0; }
+  .np-lyrics[open] .np-lyrics-head::after { content: "▾"; }
+  .np-lyrics-body { white-space: pre-wrap; word-break: break-word; margin-top: 10px;
     line-height: 1.9; font-size: .92rem; color: var(--ink); }
   /* PC では全画面プレイヤーを横並びに (左: プレイヤー / 右: 歌詞) */
   @media (min-width: 960px) {

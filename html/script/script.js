@@ -164,7 +164,10 @@
         var bodyEl = document.getElementById(pair[1]);
         if (!box || !bodyEl) return;
         if (lyrics) {
-          if (bodyEl.textContent !== lyrics) bodyEl.textContent = lyrics;
+          if (bodyEl.textContent !== lyrics) {
+            bodyEl.textContent = lyrics;
+            if (box.tagName === "DETAILS") box.open = false;
+          }
           box.hidden = false;
         } else {
           box.hidden = true;
