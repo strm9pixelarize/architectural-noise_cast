@@ -11,6 +11,7 @@
     --card: rgba(255,255,255,.68);
   }
   * { box-sizing: border-box; }
+  html, body { overflow-x: hidden; overflow-x: clip; }
   html { scroll-behavior: smooth; }
   body {
     margin: 0; color: var(--ink); background: var(--bg);
@@ -34,9 +35,11 @@
   }
   .header-in { max-width: 1080px; margin: 0 auto; padding: 0 20px; height: 64px;
     display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-  .brandmark { display: flex; align-items: center; gap: 10px; font-weight: 800; letter-spacing: .02em; }
-  .brandmark img { width: 34px; height: 34px; border-radius: 9px; }
-  .header-right { display: flex; align-items: center; gap: 8px; }
+  .brandmark { display: flex; align-items: center; gap: 10px; font-weight: 800; letter-spacing: .02em;
+    min-width: 0; flex: 1 1 auto; }
+  .brandmark span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .brandmark img { width: 34px; height: 34px; border-radius: 9px; flex-shrink: 0; }
+  .header-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
   .chip { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px;
     font-size: .72rem; font-weight: 700; }
   .chip-live { background: rgba(252,167,63,.18); border: 1px solid rgba(252,167,63,.45); color: var(--brand); }
@@ -89,9 +92,10 @@
 
   /* ===== 本体カード ===== */
   main { max-width: 1080px; margin: 0 auto; padding: 28px 20px 8px;
-    display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-  @media (max-width: 820px) { main { grid-template-columns: 1fr; } }
+    display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px; }
+  @media (max-width: 820px) { main { grid-template-columns: minmax(0, 1fr); } }
   section {
+    min-width: 0;
     background: var(--card); border: 1px solid var(--line); border-radius: 16px;
     padding: 22px; box-shadow: 0 4px 18px rgba(30,41,59,.05);
     transition: transform .18s ease, box-shadow .18s ease;
@@ -105,6 +109,8 @@
 
   /* Now Playing */
   .np-flex { display: flex; gap: 16px; align-items: center; }
+  .np-flex > div { min-width: 0; }
+  .now, .artist { overflow-wrap: anywhere; }
   .np-art { width: 96px; height: 96px; border-radius: 14px; object-fit: cover;
     border: 1px solid var(--line); background: #e2e8f0; flex-shrink: 0; }
   .now { font-size: 1.2rem; font-weight: 800; color: var(--ink-strong); margin: 0; }
@@ -138,7 +144,8 @@
     padding: 12px 14px; border: 1px solid var(--line); border-radius: 14px;
     background: rgba(255,255,255,.55); text-decoration: none; }
   .link-thumb { width: 64px; height: 64px; object-fit: cover; border-radius: 10px; flex: none; }
-  .link-body { display: block; }
+  .link-body { display: block; min-width: 0; }
+  .link-title, .link-desc { overflow-wrap: anywhere; }
   .link-title { display: block; font-weight: 700; }
   .link-desc { display: block; margin-top: 2px; color: var(--muted); font-size: .88rem; font-weight: 400; line-height: 1.6; }
   footer { max-width: 1080px; margin: 0 auto; padding: 10px 20px 30px; color: var(--muted); font-size: .82rem; }
