@@ -214,6 +214,14 @@
     letter-spacing: .18em; color: var(--muted); }
   .np-lyrics-body { white-space: pre-wrap; word-break: break-word;
     line-height: 1.9; font-size: .92rem; color: var(--ink); }
+  /* PC では全画面プレイヤーを横並びに (左: プレイヤー / 右: 歌詞) */
+  @media (min-width: 960px) {
+    .fs-in { display: flex; align-items: flex-start; justify-content: center;
+      gap: 40px; max-width: 1120px; }
+    .fs-main { flex: 0 0 400px; min-width: 0; }
+    .fs-lyrics { flex: 1 1 auto; min-width: 0; margin-top: 0;
+      max-height: calc(100dvh - 48px); overflow-y: auto; }
+  }
   .fs-close { position: absolute; top: 18px; right: 20px; z-index: 2; width: 44px; height: 44px;
     border-radius: 50%; border: 1px solid rgba(255,255,255,.3); background: rgba(255,255,255,.12);
     color: #fff; font-size: 1.1rem; cursor: pointer; }
