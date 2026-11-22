@@ -497,7 +497,9 @@
   function loadRequests() {
     fetch(REQ_API).then(function (r) { return r.json(); }).then(function (d) {
       reqSongs = (Array.isArray(d) ? d : []).filter(function (item) {
-        return !REQ_EXCLUDE_TITLES[((item.song || {}).title || "")];
+        var t = (item.song || {}).title || "";
+        // パワープレイ版 (タイトル末尾が「(パワープレイ)」) も曲として出さない
+        return !REQ_EXCLUDE_TITLES[t] && !/[（(]パワープレイ[）)]$/.test(t);
       });
       buildReqChips();
       renderRequests(document.getElementById("req-search").value);
