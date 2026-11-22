@@ -422,8 +422,8 @@
     if (previewId === item.request_id) { stopPreview(); return; }
     stopPreview();
     if (!audio.paused) audio.pause(); // 本編と同時に鳴らさない
-    preview.src = "https://cast.architectural-n.net/ondemand/nerurus_room_rest/"
-      + item.request_id + ".mp3";
+    preview.src = "https://cast.architectural-n.net/api/station/11/ondemand/download/"
+      + item.request_id;
     previewId = item.request_id;
     previewBtn = btn;
     btn.textContent = "停止";
