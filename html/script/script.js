@@ -320,7 +320,7 @@
   document.getElementById("play-big").addEventListener("click", togglePlay);
   document.getElementById("pb-play").addEventListener("click", togglePlay);
   document.getElementById("fs-play").addEventListener("click", togglePlay);
-  audio.addEventListener("play", function () { setPlayingUI(true); });
+  audio.addEventListener("play", function () { setPlayingUI(true); stopPreview(); });
   audio.addEventListener("pause", function () { setPlayingUI(false); });
   document.getElementById("pb-vol").addEventListener("input", function (e) {
     audio.volume = parseFloat(e.target.value);
@@ -398,6 +398,39 @@
   var REQ_NO_ARTIST = "アーティストなし";
   var reqSongs = [];
   var reqDone = {}; // request_id -> true (このページで送信済みの曲)
+
+  /* ===== 試聴 (AzuraCast のオンデマンド再生) ===== */
+  var preview = new Audio();
+  preview.preload = "none";
+  var previewId = null; // 試聴中の request_id
+  var previewBtn = null; // 試聴中ボタンの表示を戻すため
+  function stopPreview() {
+    preview.pause();
+    if (previewBtn) {
+      previewBtn.textContent = "試聴";
+      previewBtn.classList.remove("on");
+    }
+    previewId = null;
+    previewBtn = null;
+  }
+  preview.addEventListener("ended", stopPreview);
+  preview.addEventListener("error", function () {
+    if (previewId) reqStatus("この曲は試聴できませんでした", "err");
+    stopPreview();
+  });
+  function togglePreview(item, btn) {
+    if (previewId === item.request_id) { stopPreview(); return; }
+    stopPreview();
+    if (!audio.paused) audio.pause(); // 本編と同時に鳴らさない
+    preview.src = "https://cast.architectural-n.net/ondemand/nerurus_room_rest/"
+      + item.request_id + ".mp3";
+    previewId = item.request_id;
+    previewBtn = btn;
+    btn.textContent = "停止";
+    btn.classList.add("on");
+    var p = preview.play();
+    if (p && p.catch) p.catch(function () { /* 失敗表示は error 側で処理 */ });
+  }
   function reqStatus(msg, kind) {
     var el = document.getElementById("req-status");
     el.textContent = msg;
@@ -424,6 +457,15 @@
       var ar = document.createElement("div"); ar.className = "req-artist";
       ar.textContent = s.artist || "";
       info.appendChild(tt); info.appendChild(ar); li.appendChild(info);
+      var pv = document.createElement("button");
+      pv.className = "req-pv-btn"; pv.type = "button";
+      if (previewId === item.request_id) {
+        pv.textContent = "停止"; pv.classList.add("on"); previewBtn = pv;
+      } else {
+        pv.textContent = "試聴";
+      }
+      pv.addEventListener("click", function () { togglePreview(item, pv); });
+      li.appendChild(pv);
       var btn = document.createElement("button");
       btn.className = "req-btn"; btn.type = "button";
       if (reqDone[item.request_id]) {
