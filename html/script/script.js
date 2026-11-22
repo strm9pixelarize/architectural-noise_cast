@@ -304,10 +304,13 @@
   }
 
   /* ===== 再生コントロール (ヒーローとバーで同期) ===== */
+  var ICON_PLAY = '<svg viewBox="0 0 24 24" width="1.05em" height="1.05em" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>';
+  var ICON_PAUSE = '<svg viewBox="0 0 24 24" width="1.05em" height="1.05em" fill="currentColor" aria-hidden="true"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>';
   function setPlayingUI(playing) {
-    document.getElementById("play-big").textContent = playing ? "⏸" : "▶";
-    document.getElementById("pb-play").textContent = playing ? "⏸" : "▶";
-    document.getElementById("fs-play").textContent = playing ? "⏸" : "▶";
+    var icon = playing ? ICON_PAUSE : ICON_PLAY;
+    document.getElementById("play-big").innerHTML = icon;
+    document.getElementById("pb-play").innerHTML = icon;
+    document.getElementById("fs-play").innerHTML = icon;
     document.getElementById("hero").classList.toggle("playing", playing);
     document.getElementById("fs-overlay").classList.toggle("playing", playing);
   }
@@ -389,6 +392,8 @@
      送信: POST <request_url> (一覧の各曲に付いているパス)
      制限 (同じ曲・連続リクエスト) は AzuraCast 側が判定し、理由が返る。 */
   var REQ_API = "https://cast.architectural-n.net/api/station/nerurus_room_rest/requests";
+  // 番組・スポットは曲ではないのでリクエスト一覧に出さない
+  var REQ_EXCLUDE_TITLES = { "ネルラジニュース": true, "交通情報": true, "天気情報": true };
   var reqSongs = [];
   var reqDone = {}; // request_id -> true (このページで送信済みの曲)
   function reqStatus(msg, kind) {
@@ -460,7 +465,9 @@
   }
   function loadRequests() {
     fetch(REQ_API).then(function (r) { return r.json(); }).then(function (d) {
-      reqSongs = Array.isArray(d) ? d : [];
+      reqSongs = (Array.isArray(d) ? d : []).filter(function (item) {
+        return !REQ_EXCLUDE_TITLES[((item.song || {}).title || "")];
+      });
       renderRequests(document.getElementById("req-search").value);
     }).catch(function () {
       reqStatus("曲リストを取得できませんでした", "err");
