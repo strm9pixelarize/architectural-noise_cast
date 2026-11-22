@@ -394,6 +394,8 @@
   var REQ_API = "https://cast.architectural-n.net/api/station/nerurus_room_rest/requests";
   // 番組・スポットは曲ではないのでリクエスト一覧に出さない
   var REQ_EXCLUDE_TITLES = { "ネルラジニュース": true, "交通情報": true, "天気情報": true };
+  var reqArtist = "*"; // アーティスト絞り込み ("*" = すべて)
+  var REQ_NO_ARTIST = "アーティストなし";
   var reqSongs = [];
   var reqDone = {}; // request_id -> true (このページで送信済みの曲)
   function reqStatus(msg, kind) {
@@ -408,6 +410,7 @@
     var shown = 0;
     reqSongs.forEach(function (item) {
       var s = item.song || {};
+      if (reqArtist !== "*" && (s.artist || "") !== reqArtist) return;
       var hay = ((s.title || "") + " " + (s.artist || "") + " " + (s.text || "")).toLowerCase();
       if (q && hay.indexOf(q) === -1) return;
       shown++;
@@ -433,10 +436,38 @@
       list.appendChild(li);
     });
     if (!shown) {
-      reqStatus(q ? "「" + filter + "」に一致する曲がありません" : "リクエストできる曲がありません");
-    } else if (!q) {
+      reqStatus("条件に一致する曲がありません");
+    } else if (!q && reqArtist === "*") {
       reqStatus("リクエストできる曲は " + reqSongs.length + " 曲です");
+    } else {
+      reqStatus(shown + " 曲を表示しています");
     }
+  }
+  function buildReqChips() {
+    var box = document.getElementById("req-chips");
+    box.innerHTML = "";
+    var counts = {};
+    reqSongs.forEach(function (item) {
+      var a = (item.song || {}).artist || "";
+      counts[a] = (counts[a] || 0) + 1;
+    });
+    var names = Object.keys(counts).sort(function (x, y) {
+      return counts[y] - counts[x] || x.localeCompare(y);
+    });
+    function addChip(value, label, count) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "req-chip" + (reqArtist === value ? " on" : "");
+      b.textContent = label + " (" + count + ")";
+      b.addEventListener("click", function () {
+        reqArtist = value;
+        buildReqChips();
+        renderRequests(document.getElementById("req-search").value);
+      });
+      box.appendChild(b);
+    }
+    addChip("*", "すべて", reqSongs.length);
+    names.forEach(function (a) { addChip(a, a || REQ_NO_ARTIST, counts[a]); });
   }
   function sendRequest(item, btn) {
     btn.disabled = true; btn.textContent = "送信中…";
@@ -468,6 +499,7 @@
       reqSongs = (Array.isArray(d) ? d : []).filter(function (item) {
         return !REQ_EXCLUDE_TITLES[((item.song || {}).title || "")];
       });
+      buildReqChips();
       renderRequests(document.getElementById("req-search").value);
     }).catch(function () {
       reqStatus("曲リストを取得できませんでした", "err");

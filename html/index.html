@@ -18,7 +18,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style/style.css?v=20261122f">
+<link rel="stylesheet" href="style/style.css?v=20261122g">
 </head>
 <body>
 <header>
@@ -109,6 +109,7 @@
     <p class="note">聴きたい曲を選んでリクエストできます。リクエストした曲は AutoDJ の順番に入り、
       しばらくすると流れます。同じ曲の再リクエストや連続リクエストには AzuraCast 側の制限があります。</p>
     <input class="req-search" id="req-search" type="search" placeholder="曲名・アーティストで検索" aria-label="リクエスト曲を検索">
+    <div class="req-chips" id="req-chips" role="group" aria-label="アーティストで絞り込み"></div>
     <p class="req-status" id="req-status">読み込み中…</p>
     <ul class="req-list" id="req-list"></ul>
   </section>
@@ -173,6 +174,6 @@
 <audio id="radio-audio" preload="none"
   src="https://cast.architectural-n.net/listen/nerurus_room_rest/radio.mp3"></audio>
 
-<script src="script/script.js?v=20261122c"></script>
+<script src="script/script.js?v=20261122d"></script>
 </body>
 </html>
