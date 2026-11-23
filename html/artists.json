@@ -1,0 +1,20 @@
+{
+    "artists": [
+        {
+            "name": "ときえのき",
+            "aliases": ["ときえのきAI部", "jikantoki"],
+            "description": "この放送システムの大元を書いた人。エノキ電気 / ENOKI ELECTRONICS。",
+            "image": "https://www.enoki.xyz/icons/icon-192.webp",
+            "url": "https://enoki.xyz/",
+            "x": ""
+        },
+        {
+            "name": "After#Light",
+            "aliases": [],
+            "description": "ねるるの日常の専属歌手 Asahi とゲストの Akari によるユニット。アルバム『スタートボタン』を公式サイトで無料公開中。",
+            "image": "",
+            "url": "https://after-light.architectural-n.net/",
+            "x": ""
+        }
+    ]
+}

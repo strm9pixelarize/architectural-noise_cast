@@ -141,6 +141,7 @@
       document.getElementById("pb-artist").textContent = artist || "ねるるラジオ";
       document.getElementById("fs-title").textContent = title;
       document.getElementById("fs-artist").textContent = artist;
+      renderArtistInfo(artist);
       if (s.art) {
         document.getElementById("np-art").src = s.art;
         document.getElementById("pb-art").src = s.art;
@@ -403,6 +404,82 @@
   }
 
 
+  /* ===== アーティスト情報 (artists.json で設定。再生中のアーティストと
+     name または aliases が一致したら、紹介カードを出す) ===== */
+  var artistEntries = null;
+  var artistInfoKey = null;
+  function loadArtists() {
+    fetch("artists.json", { cache: "no-store" })
+      .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+      .then(function (d) {
+        artistEntries = Array.isArray(d.artists) ? d.artists : [];
+        var cur = document.getElementById("now-artist");
+        renderArtistInfo(cur ? cur.textContent : "");
+      })
+      .catch(function () { artistEntries = []; });
+  }
+  function findArtist(artist) {
+    if (!artistEntries || !artist) return null;
+    var key = String(artist).trim();
+    for (var i = 0; i < artistEntries.length; i++) {
+      var e = artistEntries[i];
+      if (!e || !e.name) continue;
+      if (e.name === key) return e;
+      var aliases = Array.isArray(e.aliases) ? e.aliases : [];
+      for (var k = 0; k < aliases.length; k++) { if (aliases[k] === key) return e; }
+    }
+    return null;
+  }
+  function buildArtistCard(e) {
+    var card = document.createElement("div");
+    card.className = "artist-card";
+    if (e.image) {
+      var img = document.createElement("img");
+      img.className = "link-thumb"; img.src = e.image; img.alt = "";
+      card.appendChild(img);
+    }
+    var body = document.createElement("div"); body.className = "link-body";
+    var t = document.createElement("span"); t.className = "link-title";
+    t.textContent = e.name;
+    body.appendChild(t);
+    if (e.description) {
+      var ds = document.createElement("span"); ds.className = "link-desc";
+      ds.textContent = e.description;
+      body.appendChild(ds);
+    }
+    var links = document.createElement("div"); links.className = "artist-links";
+    if (e.url) {
+      var a1 = document.createElement("a");
+      a1.className = "artist-link"; a1.href = e.url;
+      a1.target = "_blank"; a1.rel = "noopener";
+      a1.textContent = "公式サイト";
+      links.appendChild(a1);
+    }
+    if (e.x) {
+      var a2 = document.createElement("a");
+      a2.className = "artist-link"; a2.href = e.x;
+      a2.target = "_blank"; a2.rel = "noopener";
+      a2.textContent = "X";
+      links.appendChild(a2);
+    }
+    if (links.children.length) body.appendChild(links);
+    card.appendChild(body);
+    return card;
+  }
+  function renderArtistInfo(artist) {
+    var e = findArtist(artist);
+    var key = e ? e.name : "";
+    if (key === artistInfoKey) return;
+    artistInfoKey = key;
+    ["np-artist-info", "fs-artist-info"].forEach(function (id) {
+      var box = document.getElementById(id);
+      if (!box) return;
+      box.innerHTML = "";
+      if (e) { box.appendChild(buildArtistCard(e)); box.hidden = false; }
+      else { box.hidden = true; }
+    });
+  }
+
   /* ===== 曲のリクエスト (AzuraCast 公開API) =====
      一覧: GET /api/station/<shortcode>/requests
      送信: POST <request_url> (一覧の各曲に付いているパス)
@@ -574,6 +651,7 @@
   loadRequests();
   renderContent();
   renderLinks();
+  loadArtists();
   setInterval(update, 30000);
   setInterval(renderContent, 30000);
   tickClock();

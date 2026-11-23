@@ -223,6 +223,22 @@
   .np-lyrics[open] .np-lyrics-head::after { content: "▾"; }
   .np-lyrics-body { white-space: pre-wrap; word-break: break-word; margin-top: 10px;
     line-height: 1.9; font-size: .92rem; color: var(--ink); }
+  /* アーティスト情報カード (artists.json と一致した時だけ表示) */
+  .artist-info { margin-top: 14px; text-align: left; }
+  .artist-card { display: flex; align-items: center; gap: 14px;
+    padding: 12px 14px; border: 1px solid var(--line); border-radius: 14px;
+    background: rgba(255,255,255,.55); }
+  .artist-links { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+  .artist-link { display: inline-block; padding: 5px 12px; border-radius: 999px;
+    border: 1px solid var(--line); background: var(--card);
+    color: #b45309; font-size: .8rem; font-weight: 700; text-decoration: none; }
+  .fs-artist-info { margin-top: 10px; }
+  .fs-artist-info .artist-card { background: rgba(255,255,255,.10);
+    border-color: rgba(255,255,255,.16); }
+  .fs-artist-info .link-title { color: #f1f5f9; }
+  .fs-artist-info .link-desc { color: #cbd5e1; }
+  .fs-artist-info .artist-link { background: rgba(255,255,255,.12);
+    border-color: rgba(255,255,255,.25); color: #f1f5f9; }
   /* PC では全画面プレイヤーを横並びに (左: プレイヤー / 右: 歌詞) */
   @media (min-width: 960px) {
     .fs-in { display: flex; align-items: flex-start; justify-content: center;

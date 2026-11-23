@@ -18,7 +18,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style/style.css?v=20261123a">
+<link rel="stylesheet" href="style/style.css?v=20261123b">
 </head>
 <body>
 <header>
@@ -65,6 +65,7 @@
       <summary class="np-lyrics-head">歌詞</summary>
       <div class="np-lyrics-body" id="np-lyrics-body"></div>
     </details>
+    <div class="artist-info" id="np-artist-info" hidden></div>
     <ul class="history" id="history"></ul>
   </section>
 
@@ -155,6 +156,7 @@
     <img class="fs-art" id="fs-art" src="default-album-art-v2.png" alt="アートワーク">
     <p class="fs-title" id="fs-title">—</p>
     <p class="fs-artist" id="fs-artist"></p>
+    <div class="artist-info fs-artist-info" id="fs-artist-info" hidden></div>
     <div class="eq" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
     <div class="fs-progress"><div id="fs-progress"></div></div>
     <p class="fs-meta mono"><span id="fs-time">-:-- / -:--</span><span id="fs-listeners"></span></p>
@@ -175,6 +177,6 @@
 <audio id="radio-audio" preload="none"
   src="https://cast.architectural-n.net/listen/nerurus_room_rest/radio.mp3"></audio>
 
-<script src="script/script.js?v=20261123a"></script>
+<script src="script/script.js?v=20261123b"></script>
 </body>
 </html>
