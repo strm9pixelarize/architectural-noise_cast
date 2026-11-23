@@ -333,8 +333,24 @@
 
   /* ===== 全画面プレイヤーの開閉 ===== */
   var overlay = document.getElementById("fs-overlay");
-  function openFs() { overlay.classList.add("open"); document.body.classList.add("fs-lock"); }
-  function closeFs() { overlay.classList.remove("open"); document.body.classList.remove("fs-lock"); }
+  var fsScrollY = null; // 全画面表示前のスクロール位置 (背面固定と復元用)
+  function openFs() {
+    if (fsScrollY === null) {
+      fsScrollY = window.scrollY || 0;
+      document.body.style.top = "-" + fsScrollY + "px";
+    }
+    overlay.classList.add("open");
+    document.body.classList.add("fs-lock");
+  }
+  function closeFs() {
+    overlay.classList.remove("open");
+    document.body.classList.remove("fs-lock");
+    if (fsScrollY !== null) {
+      document.body.style.top = "";
+      window.scrollTo(0, fsScrollY);
+      fsScrollY = null;
+    }
+  }
   document.querySelector(".playerbar").addEventListener("click", function (e) {
     if (e.target.closest("button, input")) return; // 再生ボタン・音量・拡大ボタンは除外
     openFs();
