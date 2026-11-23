@@ -25,7 +25,12 @@
             "description": "東京を拠点に活動する4人組ロックバンド。クラシック音楽を融合させた楽曲と、Vo./Gt./Key. Mikiの唯一無二の歌声が持ち味。当ラジオでは1stアルバム『Prelude』から「はなび」「Girl」をオンエア中。",
             "image": "https://navyorion.com/images/navyorion-logo.png",
             "url": "https://navyorion.com/",
-            "social": []
+            "social": [
+                { "label": "X", "url": "https://x.com/navy_orion_" },
+                { "label": "Instagram", "url": "https://www.instagram.com/navy_orion_" },
+                { "label": "YouTube", "url": "https://www.youtube.com/@navy_orion_" },
+                { "label": "TikTok", "url": "https://www.tiktok.com/@navy_orion_" }
+            ]
         }
     ]
 }
