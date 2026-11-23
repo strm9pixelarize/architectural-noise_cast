@@ -1,5 +1,9 @@
 /* cast.architectural-n.net トップページのスタイル (v4 で index.html から分離)
    元は cast-top-draft-v3.html の <style> ブロック。そのまま移したもの。 */
+
+/* スクロールバー非表示 (スクロール自体は可能) */
+html { scrollbar-width: none; }
+html::-webkit-scrollbar { display: none; }
   :root {
     color-scheme: light;
     --bg: #f7f4eb;          /* 本家サイトと同色 */
