@@ -455,13 +455,16 @@
       a1.textContent = "公式サイト";
       links.appendChild(a1);
     }
-    if (e.x) {
+    var socials = Array.isArray(e.social) ? e.social.slice() : [];
+    if (e.x) socials.push({ label: "X", url: e.x });
+    socials.forEach(function (s) {
+      if (!s || !s.url) return;
       var a2 = document.createElement("a");
-      a2.className = "artist-link"; a2.href = e.x;
+      a2.className = "artist-link"; a2.href = s.url;
       a2.target = "_blank"; a2.rel = "noopener";
-      a2.textContent = "X";
+      a2.textContent = s.label || "リンク";
       links.appendChild(a2);
-    }
+    });
     if (links.children.length) body.appendChild(links);
     card.appendChild(body);
     return card;

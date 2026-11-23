@@ -2,11 +2,14 @@
     "artists": [
         {
             "name": "ときえのき",
-            "aliases": ["ときえのきAI部", "jikantoki"],
+            "aliases": [
+                "ときえのきAI部",
+                "jikantoki"
+            ],
             "description": "この放送システムの大元を書いた人。エノキ電気 / ENOKI ELECTRONICS。",
             "image": "https://www.enoki.xyz/icons/icon-192.webp",
             "url": "https://enoki.xyz/",
-            "x": ""
+            "social": []
         },
         {
             "name": "After#Light",
@@ -14,7 +17,7 @@
             "description": "ねるるの日常の専属歌手 Asahi とゲストの Akari によるユニット。アルバム『スタートボタン』を公式サイトで無料公開中。",
             "image": "",
             "url": "https://after-light.architectural-n.net/",
-            "x": ""
+            "social": []
         },
         {
             "name": "NAVY ORION",
@@ -22,7 +25,7 @@
             "description": "東京を拠点に活動する4人組ロックバンド。クラシック音楽を融合させた楽曲と、Vo./Gt./Key. Mikiの唯一無二の歌声が持ち味。当ラジオでは1stアルバム『Prelude』から「はなび」「Girl」をオンエア中。",
             "image": "https://navyorion.com/images/navyorion-logo.png",
             "url": "https://navyorion.com/",
-            "x": ""
+            "social": []
         }
     ]
 }
