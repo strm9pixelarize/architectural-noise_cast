@@ -698,7 +698,12 @@
       if (mode === "allday") { cmdMsg.textContent = "すでに ALL DAY モードです"; return; }
       closeCmd();
       warnOverlay.hidden = false;
-      document.getElementById("warn-ok").focus();
+      // 開いた直後の Enter 誤爆で即確定しないよう、確定ボタンは少し遅れて有効化し、
+      // フォーカスは「やめる」側に置く
+      var okBtn = document.getElementById("warn-ok");
+      okBtn.disabled = true;
+      setTimeout(function () { okBtn.disabled = false; }, 600);
+      document.getElementById("warn-cancel").focus();
     } else if (c === "normal" || c === "reset") {
       if (mode === "normal") { cmdMsg.textContent = "すでに通常モードです"; return; }
       closeCmd();
