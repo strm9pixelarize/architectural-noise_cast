@@ -2,7 +2,19 @@
    元は cast-top-draft-v3.html の <script> ブロック2つを連結したもの。 */
 (function () {
   "use strict";
-  var API = "https://cast.architectural-n.net/api/nowplaying/nerurus_room_rest";
+  /* ===== ステーション切替 (通常 / ALL DAY) =====
+     コマンド all-day で、深夜枠の「健全なものリスト」を終日流す
+     別ステーション (nerurus_room_allday) に切り替える。 */
+  var BASE = "https://cast.architectural-n.net";
+  var STATIONS = {
+    normal: { code: "nerurus_room_rest", id: 11 },
+    allday: { code: "nerurus_room_allday", id: 12 }
+  };
+  var mode = "normal";
+  try { if (localStorage.getItem("cast-mode") === "allday") mode = "allday"; } catch (e) {}
+  function st() { return STATIONS[mode]; }
+  function apiUrl() { return BASE + "/api/nowplaying/" + st().code; }
+  function reqApiUrl() { return BASE + "/api/station/" + st().code + "/requests"; }
   var audio = document.getElementById("radio-audio");
   var song = { elapsed: 0, duration: 0 };
 
@@ -132,7 +144,7 @@
     document.getElementById("fs-time").textContent = fmt(song.elapsed) + " / " + fmt(song.duration);
   }
   function update() {
-    fetch(API).then(function (r) { return r.json(); }).then(function (d) {
+    fetch(apiUrl()).then(function (r) { return r.json(); }).then(function (d) {
       var np = d.now_playing || {}, s = np.song || {};
       var title = s.title || "—", artist = s.artist || "";
       document.getElementById("now-playing").textContent = title;
@@ -487,7 +499,6 @@
      一覧: GET /api/station/<shortcode>/requests
      送信: POST <request_url> (一覧の各曲に付いているパス)
      制限 (同じ曲・連続リクエスト) は AzuraCast 側が判定し、理由が返る。 */
-  var REQ_API = "https://cast.architectural-n.net/api/station/nerurus_room_rest/requests";
   // 番組・スポットは曲ではないのでリクエスト一覧に出さない
   var REQ_EXCLUDE_TITLES = { "ネルラジニュース": true, "交通情報": true, "天気情報": true };
   var reqArtist = "*"; // アーティスト絞り込み ("*" = すべて)
@@ -518,7 +529,7 @@
     if (previewId === item.request_id) { stopPreview(); return; }
     stopPreview();
     if (!audio.paused) audio.pause(); // 本編と同時に鳴らさない
-    preview.src = "https://cast.architectural-n.net/api/station/11/ondemand/download/"
+    preview.src = BASE + "/api/station/" + st().id + "/ondemand/download/"
       + item.request_id;
     previewId = item.request_id;
     previewBtn = btn;
@@ -609,7 +620,7 @@
   }
   function sendRequest(item, btn) {
     btn.disabled = true; btn.textContent = "送信中…";
-    fetch("https://cast.architectural-n.net" + item.request_url, { method: "POST" })
+    fetch(BASE + item.request_url, { method: "POST" })
       .then(function (r) {
         return r.json().catch(function () { return {}; })
           .then(function (j) { return { ok: r.ok, j: j }; });
@@ -633,7 +644,7 @@
       });
   }
   function loadRequests() {
-    fetch(REQ_API).then(function (r) { return r.json(); }).then(function (d) {
+    fetch(reqApiUrl()).then(function (r) { return r.json(); }).then(function (d) {
       reqSongs = (Array.isArray(d) ? d : []).filter(function (item) {
         var t = (item.song || {}).title || "";
         // パワープレイ版 (タイトル末尾が「(パワープレイ)」) も曲として出さない
@@ -649,6 +660,81 @@
     renderRequests(e.target.value);
   });
 
+  /* ===== モード切替の適用 ===== */
+  function applyMode(next) {
+    if (next === mode) return;
+    mode = next;
+    try { localStorage.setItem("cast-mode", next); } catch (e) {}
+    var wasPlaying = !audio.paused;
+    stopPreview();
+    audio.src = BASE + "/listen/" + st().code + "/radio.mp3";
+    audio.load();
+    if (wasPlaying) {
+      var p = audio.play();
+      if (p && p.catch) p.catch(function () {});
+    }
+    document.getElementById("mode-badge").hidden = next !== "allday";
+    reqDone = {};
+    reqArtist = "*";
+    update();
+    loadRequests();
+  }
+
+  /* ===== コマンド (all-day / normal) ===== */
+  var cmdOverlay = document.getElementById("cmd-overlay");
+  var cmdInput = document.getElementById("cmd-input");
+  var cmdMsg = document.getElementById("cmd-msg");
+  var warnOverlay = document.getElementById("warn-overlay");
+  function openCmd() {
+    cmdOverlay.hidden = false;
+    cmdMsg.textContent = "";
+    cmdInput.value = "";
+    setTimeout(function () { cmdInput.focus(); }, 30);
+  }
+  function closeCmd() { cmdOverlay.hidden = true; }
+  function runCommand() {
+    var c = cmdInput.value.trim().toLowerCase();
+    if (c === "all-day" || c === "allday") {
+      if (mode === "allday") { cmdMsg.textContent = "すでに ALL DAY モードです"; return; }
+      closeCmd();
+      warnOverlay.hidden = false;
+      document.getElementById("warn-ok").focus();
+    } else if (c === "normal" || c === "reset") {
+      if (mode === "normal") { cmdMsg.textContent = "すでに通常モードです"; return; }
+      closeCmd();
+      applyMode("normal");
+    } else if (c === "") {
+      cmdMsg.textContent = "コマンドを入力してください (all-day / normal)";
+    } else {
+      cmdMsg.textContent = "そのコマンドはありません。対応コマンド: all-day / normal";
+    }
+  }
+  document.getElementById("cmd-open").addEventListener("click", openCmd);
+  document.getElementById("warn-ok").addEventListener("click", function () {
+    warnOverlay.hidden = true;
+    applyMode("allday");
+  });
+  document.getElementById("warn-cancel").addEventListener("click", function () {
+    warnOverlay.hidden = true;
+  });
+  cmdInput.addEventListener("keydown", function (e) {
+    if (e.key === "Enter") runCommand();
+  });
+  [cmdOverlay, warnOverlay].forEach(function (ov) {
+    ov.addEventListener("click", function (e) { if (e.target === ov) ov.hidden = true; });
+  });
+  document.addEventListener("keydown", function (e) {
+    if ((e.ctrlKey || e.metaKey) && (e.key === "k" || e.key === "K")) {
+      e.preventDefault();
+      if (cmdOverlay.hidden) openCmd(); else closeCmd();
+    }
+    if (e.key === "Escape") { closeCmd(); warnOverlay.hidden = true; }
+  });
+
+  if (mode === "allday") {
+    audio.src = BASE + "/listen/" + st().code + "/radio.mp3";
+    document.getElementById("mode-badge").hidden = false;
+  }
   renderSchedule();
   update();
   loadRequests();

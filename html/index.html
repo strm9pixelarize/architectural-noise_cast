@@ -18,7 +18,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style/style.css?v=20261124a">
+<link rel="stylesheet" href="style/style.css?v=20261125a">
 </head>
 <body>
 <header>
@@ -31,6 +31,7 @@
       <span class="chip chip-live"><span class="dot"></span>LIVE</span>
       <span id="clock" class="mono">--:--:--</span>
       <button class="fx-toggle" id="fx-toggle" aria-pressed="true" title="演出エフェクト ON/OFF">✦ FX</button>
+      <button class="fx-toggle" id="cmd-open" title="コマンドを開く (Ctrl+K)">⌘ コマンド</button>
     </div>
   </div>
 </header>
@@ -51,6 +52,7 @@
 <main>
   <section class="reveal">
     <h2>いま流れているもの</h2>
+    <p class="mode-badge" id="mode-badge" hidden>ALL DAY モード — 深夜の「健全なものリスト」を終日放送中</p>
     <div class="np-flex">
       <img class="np-art" id="np-art" src="default-album-art-v2.png" alt="アートワーク">
       <div>
@@ -174,9 +176,36 @@
   </div>
 </div>
 
+<!-- コマンドパレット (all-day / normal) -->
+<div class="cmd-overlay" id="cmd-overlay" hidden>
+  <div class="cmd-box" role="dialog" aria-modal="true" aria-label="コマンド">
+    <p class="cmd-title mono">&gt; コマンド</p>
+    <input id="cmd-input" type="text" placeholder="コマンドを入力 (例: all-day)" autocomplete="off" spellcheck="false">
+    <p class="cmd-hint">対応コマンド: <b>all-day</b> = 深夜の健全なものリストを終日流す / <b>normal</b> = 通常モードに戻す</p>
+    <p class="cmd-msg" id="cmd-msg"></p>
+  </div>
+</div>
+
+<!-- ALL DAY 切替時の注意事項 -->
+<div class="cmd-overlay" id="warn-overlay" hidden>
+  <div class="cmd-box warn-box" role="alertdialog" aria-modal="true" aria-label="注意事項">
+    <p class="warn-title">⚠ 注意事項！！！</p>
+    <ul class="warn-list">
+      <li>深夜に流れている「健全なものリスト」が、1日中流れ続けます</li>
+      <li>通常の番組・ニュース・交通／天気スポットは流れません</li>
+      <li>リクエストは「健全なものリスト」の中からのみになります</li>
+      <li>戻すときは、コマンドで <b>normal</b> と入力してください</li>
+    </ul>
+    <div class="warn-actions">
+      <button id="warn-cancel" type="button">やめる</button>
+      <button id="warn-ok" type="button" class="warn-ok">このまま切り替える</button>
+    </div>
+  </div>
+</div>
+
 <audio id="radio-audio" preload="none"
   src="https://cast.architectural-n.net/listen/nerurus_room_rest/radio.mp3"></audio>
 
-<script src="script/script.js?v=20261123c"></script>
+<script src="script/script.js?v=20261125a"></script>
 </body>
 </html>
