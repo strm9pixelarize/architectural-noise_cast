@@ -18,7 +18,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style/style.css?v=20261125b">
+<link rel="stylesheet" href="style/style.css?v=20261125c">
 </head>
 <body>
 <header>
@@ -188,7 +188,7 @@
 
 <!-- ALL DAY 切替時の注意事項 -->
 <div class="cmd-overlay" id="warn-overlay" hidden>
-  <div class="cmd-box warn-box" role="alertdialog" aria-modal="true" aria-label="注意事項">
+  <div class="cmd-box warn-box" id="warn-box" tabindex="-1" role="alertdialog" aria-modal="true" aria-label="注意事項">
     <p class="warn-title">⚠ 注意事項！！！</p>
     <ul class="warn-list">
       <li>深夜に流れている「健全なものリスト」が、1日中流れ続けます</li>
@@ -206,6 +206,6 @@
 <audio id="radio-audio" preload="none"
   src="https://cast.architectural-n.net/listen/nerurus_room_rest/radio.mp3"></audio>
 
-<script src="script/script.js?v=20261125b"></script>
+<script src="script/script.js?v=20261125c"></script>
 </body>
 </html>

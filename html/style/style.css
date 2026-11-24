@@ -318,3 +318,4 @@ html::-webkit-scrollbar { display: none; }
     border: 1px solid var(--line); background: #fff; color: var(--ink-strong); font-size: .95rem; }
   .warn-actions .warn-ok { background: #dc2626; border-color: #dc2626; color: #fff; }
   .warn-actions .warn-ok:disabled { opacity: .45; cursor: wait; }
+  .warn-box:focus { outline: none; }

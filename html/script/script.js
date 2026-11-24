@@ -698,12 +698,13 @@
       if (mode === "allday") { cmdMsg.textContent = "すでに ALL DAY モードです"; return; }
       closeCmd();
       warnOverlay.hidden = false;
-      // 開いた直後の Enter 誤爆で即確定しないよう、確定ボタンは少し遅れて有効化し、
-      // フォーカスは「やめる」側に置く
+      // ボタンにはフォーカスを当てない。Enter の押しっぱなし (リピート) が
+      // フォーカス中のボタンに刺さり、開いた瞬間に確定/キャンセルされるのを防ぐ。
+      // フォーカスはダイアログ自体へ移し、確定ボタンは少し遅れて有効化する
       var okBtn = document.getElementById("warn-ok");
       okBtn.disabled = true;
       setTimeout(function () { okBtn.disabled = false; }, 600);
-      document.getElementById("warn-cancel").focus();
+      document.getElementById("warn-box").focus();
     } else if (c === "normal" || c === "reset") {
       if (mode === "normal") { cmdMsg.textContent = "すでに通常モードです"; return; }
       closeCmd();
