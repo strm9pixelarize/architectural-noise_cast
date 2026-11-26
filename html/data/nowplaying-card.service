@@ -1,0 +1,15 @@
+[Unit]
+Description=Now Playing SVG card generator (GitHub profile)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=strm_pixelarize
+WorkingDirectory=/DATA/AppData/architectural-noise_cast/html/data
+ExecStart=/usr/bin/python3 /DATA/AppData/architectural-noise_cast/html/data/make_nowplaying_svg.py --interval 20 --out /DATA/AppData/architectural-noise_cast/html/data/nowplaying.svg
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
