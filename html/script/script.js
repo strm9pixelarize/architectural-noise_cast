@@ -148,6 +148,10 @@
      行ごとの実測タイミングは無いので、曲の長さを歌詞の文字数で比例配分して
      現在行を割り出す近似方式。elapsed は1秒tickで進むので、そのまま追随できる。 */
   var lyricsText = "", lyricsDuration = 0, lyricsLines = [], lyricsCurrent = -1;
+  /* 歌唱区間の見積もり (秒)。歌詞は曲全体ではなく「歌が始まってから
+     終わるまで」の区間に配分する。イントロが長い曲で遅れる場合は
+     START を、最後が余る場合は END を増やすと合う。 */
+  var LYRICS_START_OFFSET = 6, LYRICS_END_MARGIN = 8;
   function buildLyrics(text) {
     lyricsText = text; lyricsDuration = song.duration; lyricsCurrent = -1;
     lyricsLines = [];
@@ -156,24 +160,31 @@
     [npBody, fsBody].forEach(function (b) { if (b) b.innerHTML = ""; });
     if (!text) return;
     var raw = text.split(/\r?\n/);
+    // [Verse] [Chorus] 等のセクション見出しは歌われないので配分から外す
+    function isSection(ln) { return /^\s*\[.*\]\s*$/.test(ln); }
     var total = 0;
-    raw.forEach(function (ln) { total += ln.trim().length; });
+    raw.forEach(function (ln) { if (!isSection(ln)) total += ln.trim().length; });
+    var winStart = LYRICS_START_OFFSET, winEnd = lyricsDuration - LYRICS_END_MARGIN;
+    if (winEnd <= winStart) { winStart = 0; winEnd = lyricsDuration; }
     var acc = 0;
     raw.forEach(function (ln) {
       var len = ln.trim().length;
-      var start = (total > 0 && lyricsDuration > 0) ? lyricsDuration * acc / total : 0;
-      acc += len;
+      var sec = isSection(ln);
+      var start = (total > 0 && lyricsDuration > 0)
+        ? winStart + (winEnd - winStart) * acc / total : 0;
+      if (!sec) acc += len;
       var entry = { start: start, els: [], fsEl: null };
       [[npBody, false], [fsBody, true]].forEach(function (pair) {
         if (!pair[0]) return;
         var d = document.createElement("div");
-        if (len) { d.className = "lyr-line"; d.textContent = ln; }
+        if (sec) { d.className = "lyr-sec"; d.textContent = ln.trim(); }
+        else if (len) { d.className = "lyr-line"; d.textContent = ln; }
         else { d.className = "lyr-blank"; }
         pair[0].appendChild(d);
         entry.els.push(d);
         if (pair[1]) entry.fsEl = d;
       });
-      if (len) lyricsLines.push(entry);
+      if (len && !sec) lyricsLines.push(entry);
     });
   }
   function updateLyricsHighlight() {

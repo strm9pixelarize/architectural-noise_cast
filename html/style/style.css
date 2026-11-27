@@ -332,3 +332,4 @@ html::-webkit-scrollbar { display: none; }
   .lyr-line.on { opacity: 1; font-weight: 700; color: #d97c06; }
   .fs-lyrics-body .lyr-line.on { color: #fbbf24; }
   .lyr-blank { height: .9em; }
+  .lyr-sec { font-size: .76rem; letter-spacing: .1em; opacity: .48; margin-top: .5em; }
