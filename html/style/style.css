@@ -319,3 +319,12 @@ html::-webkit-scrollbar { display: none; }
   .warn-actions .warn-ok { background: #dc2626; border-color: #dc2626; color: #fff; }
   .warn-actions .warn-ok:disabled { opacity: .45; cursor: wait; }
   .warn-box:focus { outline: none; }
+  .req-slide { display: inline-block; white-space: nowrap; }
+  .req-slide.mq-on { will-change: transform; animation: req-mq 4.4s ease-in-out infinite alternate; }
+  @keyframes req-mq {
+    0%, 22% { transform: translateX(0); }
+    78%, 100% { transform: translateX(calc(-1 * var(--mq-d, 0px))); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .req-slide.mq-on { animation: none; }
+  }

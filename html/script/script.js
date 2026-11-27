@@ -560,9 +560,13 @@
       li.appendChild(img);
       var info = document.createElement("div"); info.className = "req-info";
       var tt = document.createElement("div"); tt.className = "req-title";
-      tt.textContent = s.title || s.text || "—";
+      var tts = document.createElement("span"); tts.className = "req-slide";
+      tts.textContent = s.title || s.text || "—";
+      tt.appendChild(tts);
       var ar = document.createElement("div"); ar.className = "req-artist";
-      ar.textContent = s.artist || "";
+      var ars = document.createElement("span"); ars.className = "req-slide";
+      ars.textContent = s.artist || "";
+      ar.appendChild(ars);
       info.appendChild(tt); info.appendChild(ar); li.appendChild(info);
       var pv = document.createElement("button");
       pv.className = "req-pv-btn"; pv.type = "button";
@@ -591,7 +595,30 @@
     } else {
       reqStatus(shown + " 曲を表示しています");
     }
+    setupReqSlides(list);
   }
+  /* はみ出した曲名・アーティスト名を全行一斉にスライドさせる (A案)。
+     全行に同じ周期のアニメーションを同じタイミングで付け、移動量だけ
+     各行のはみ出し分にするので、静止時は左端、流れ切った時は右端で
+     全行の終端が揃う。収まっている行は動かない。 */
+  function setupReqSlides(list) {
+    var slides = [];
+    list.querySelectorAll(".req-slide").forEach(function (sp) {
+      sp.classList.remove("mq-on");
+      sp.style.removeProperty("--mq-d");
+      var d = sp.scrollWidth - sp.parentNode.clientWidth;
+      if (d > 4) { sp.style.setProperty("--mq-d", d + "px"); slides.push(sp); }
+    });
+    slides.forEach(function (sp) { sp.classList.add("mq-on"); });
+  }
+  var reqSlideTimer = null;
+  window.addEventListener("resize", function () {
+    if (reqSlideTimer) clearTimeout(reqSlideTimer);
+    reqSlideTimer = setTimeout(function () {
+      var list = document.getElementById("req-list");
+      if (list) setupReqSlides(list);
+    }, 200);
+  });
   function buildReqChips() {
     var box = document.getElementById("req-chips");
     box.innerHTML = "";
