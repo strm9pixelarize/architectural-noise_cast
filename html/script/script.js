@@ -16,7 +16,8 @@
   function apiUrl() { return BASE + "/api/nowplaying/" + st().code; }
   function reqApiUrl() { return BASE + "/api/station/" + st().code + "/requests"; }
   var audio = document.getElementById("radio-audio");
-  var song = { elapsed: 0, duration: 0 };
+  var song = { elapsed: 0, duration: 0, boundaryFetched: false };
+  var npSongKey = "";
 
   function fmt(sec) {
     sec = Math.max(0, Math.round(sec || 0));
@@ -132,6 +133,13 @@
     if (song.duration > 0 && song.elapsed < song.duration) {
       song.elapsed += 1; renderProgress();
     }
+    // 曲の終わり際は、次曲への表示切り替わりを速くするため先回りで取得する
+    // (API側の反映が数秒遅れる分を見込んで4秒後にもう一度取る)
+    if (song.duration > 0 && !song.boundaryFetched && song.duration - song.elapsed <= 2) {
+      song.boundaryFetched = true;
+      update();
+      setTimeout(update, 4000);
+    }
   }
 
   /* ===== Now Playing ===== */
@@ -211,6 +219,8 @@
     fetch(apiUrl()).then(function (r) { return r.json(); }).then(function (d) {
       var np = d.now_playing || {}, s = np.song || {};
       var title = s.title || "—", artist = s.artist || "";
+      var songKey = title + "|" + artist;
+      if (songKey !== npSongKey) { npSongKey = songKey; song.boundaryFetched = false; }
       document.getElementById("now-playing").textContent = title;
       document.getElementById("now-artist").textContent = artist;
       document.getElementById("pb-title").textContent = "ON AIR // " + title;
@@ -837,7 +847,7 @@
   renderContent();
   renderLinks();
   loadArtists();
-  setInterval(update, 30000);
+  setInterval(update, 10000);
   setInterval(renderContent, 30000);
   tickClock();
   setInterval(tickClock, 1000);
