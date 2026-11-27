@@ -328,3 +328,7 @@ html::-webkit-scrollbar { display: none; }
   @media (prefers-reduced-motion: reduce) {
     .req-slide.mq-on { animation: none; }
   }
+  .lyr-line { white-space: pre-wrap; word-break: break-word; opacity: .62; transition: opacity .3s, color .3s; }
+  .lyr-line.on { opacity: 1; font-weight: 700; color: #d97c06; }
+  .fs-lyrics-body .lyr-line.on { color: #fbbf24; }
+  .lyr-blank { height: .9em; }

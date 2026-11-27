@@ -142,6 +142,59 @@
     document.getElementById("fs-progress").style.width = pct + "%";
     document.getElementById("np-time").textContent = fmt(song.elapsed) + " / " + fmt(song.duration);
     document.getElementById("fs-time").textContent = fmt(song.elapsed) + " / " + fmt(song.duration);
+    updateLyricsHighlight();
+  }
+  /* ===== 歌詞の同期表示 =====
+     行ごとの実測タイミングは無いので、曲の長さを歌詞の文字数で比例配分して
+     現在行を割り出す近似方式。elapsed は1秒tickで進むので、そのまま追随できる。 */
+  var lyricsText = "", lyricsDuration = 0, lyricsLines = [], lyricsCurrent = -1;
+  function buildLyrics(text) {
+    lyricsText = text; lyricsDuration = song.duration; lyricsCurrent = -1;
+    lyricsLines = [];
+    var npBody = document.getElementById("np-lyrics-body");
+    var fsBody = document.getElementById("fs-lyrics-body");
+    [npBody, fsBody].forEach(function (b) { if (b) b.innerHTML = ""; });
+    if (!text) return;
+    var raw = text.split(/\r?\n/);
+    var total = 0;
+    raw.forEach(function (ln) { total += ln.trim().length; });
+    var acc = 0;
+    raw.forEach(function (ln) {
+      var len = ln.trim().length;
+      var start = (total > 0 && lyricsDuration > 0) ? lyricsDuration * acc / total : 0;
+      acc += len;
+      var entry = { start: start, els: [], fsEl: null };
+      [[npBody, false], [fsBody, true]].forEach(function (pair) {
+        if (!pair[0]) return;
+        var d = document.createElement("div");
+        if (len) { d.className = "lyr-line"; d.textContent = ln; }
+        else { d.className = "lyr-blank"; }
+        pair[0].appendChild(d);
+        entry.els.push(d);
+        if (pair[1]) entry.fsEl = d;
+      });
+      if (len) lyricsLines.push(entry);
+    });
+  }
+  function updateLyricsHighlight() {
+    if (!lyricsLines.length || song.duration <= 0) return;
+    var cur = -1;
+    for (var i = 0; i < lyricsLines.length; i++) {
+      if (song.elapsed >= lyricsLines[i].start) cur = i; else break;
+    }
+    if (cur === lyricsCurrent) return;
+    lyricsCurrent = cur;
+    lyricsLines.forEach(function (e, i) {
+      e.els.forEach(function (el) { el.classList.toggle("on", i === cur); });
+    });
+    if (cur < 0) return;
+    // 全画面側は歌詞ボックス自体がスクロールする時だけ、現在行を追随させる
+    var fsBox = document.getElementById("fs-lyrics");
+    var lineEl = lyricsLines[cur].fsEl;
+    if (fsBox && lineEl && fsBox.scrollHeight > fsBox.clientHeight) {
+      var delta = lineEl.getBoundingClientRect().top - fsBox.getBoundingClientRect().top;
+      fsBox.scrollTo({ top: fsBox.scrollTop + delta - fsBox.clientHeight * 0.4, behavior: "smooth" });
+    }
   }
   function update() {
     fetch(apiUrl()).then(function (r) { return r.json(); }).then(function (d) {
@@ -172,21 +225,20 @@
       document.getElementById("fs-listeners").textContent = "リスナー: " + n + "人";
       // 歌詞 (API の song.lyrics。無い曲ではブロックごと隠す)
       var lyrics = (s.lyrics || "").trim();
-      [["np-lyrics", "np-lyrics-body"], ["fs-lyrics", "fs-lyrics-body"]].forEach(function (pair) {
-        var box = document.getElementById(pair[0]);
-        var bodyEl = document.getElementById(pair[1]);
-        if (!box || !bodyEl) return;
-        if (lyrics) {
-          if (bodyEl.textContent !== lyrics) {
-            bodyEl.textContent = lyrics;
-            if (box.tagName === "DETAILS") box.open = false;
-          }
-          box.hidden = false;
-        } else {
-          box.hidden = true;
-          bodyEl.textContent = "";
+      var npBox = document.getElementById("np-lyrics");
+      var fsBox = document.getElementById("fs-lyrics");
+      if (lyrics) {
+        if (lyrics !== lyricsText || lyricsDuration !== song.duration) {
+          buildLyrics(lyrics);
+          if (npBox && npBox.tagName === "DETAILS") npBox.open = false;
         }
-      });
+        if (npBox) npBox.hidden = false;
+        if (fsBox) fsBox.hidden = false;
+      } else {
+        if (lyricsText) buildLyrics("");
+        if (npBox) npBox.hidden = true;
+        if (fsBox) fsBox.hidden = true;
+      }
       var hist = document.getElementById("history");
       hist.innerHTML = "";
       (d.song_history || []).slice(0, 5).forEach(function (h) {
