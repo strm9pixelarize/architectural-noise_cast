@@ -216,7 +216,8 @@
     }
   }
   function update() {
-    fetch(apiUrl()).then(function (r) { return r.json(); }).then(function (d) {
+    // API が max-age=15 を返すため、ブラウザキャッシュを迂回しないと表示が最大15秒古くなる
+    fetch(apiUrl(), { cache: "no-store" }).then(function (r) { return r.json(); }).then(function (d) {
       var np = d.now_playing || {}, s = np.song || {};
       var title = s.title || "—", artist = s.artist || "";
       var songKey = title + "|" + artist;
