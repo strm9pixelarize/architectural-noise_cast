@@ -1,0 +1,11 @@
+{
+  "type": "azuracast-switch",
+  "name": "ねるるの日常",
+  "baseUrl": "https://cast.architectural-n.net",
+  "options": [
+    { "label": "通常", "shortcode": "nerurus_room_rest",
+      "note": "通常モードに切り替えます。番組・スポットを含む通常の編成に戻ります。" },
+    { "label": "ALL DAY", "shortcode": "nerurus_room_allday",
+      "note": "深夜枠の「健全なものリスト」が終日流れます。番組・スポットは流れません。リクエストは健全なものリスト内のみになります。" }
+  ]
+}
